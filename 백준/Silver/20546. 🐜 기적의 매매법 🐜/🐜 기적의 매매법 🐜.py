@@ -1,48 +1,43 @@
-N = int(input())
+money = int(input())
+stock= list(map(int, input().split()))
 
-BNF_money = N
-BNF_ju = 0
-TIMING_money = N
-TIMING_ju = 0
-up = 0
-down = 0
-chart = list(map(int, input().split()))
-yesterday = chart[0]
+wnsgus_money = money
+wnsgus_stock = 0
+tjdals_money = money
+tjdals_stock = 0
 
-for i in range(len(chart)):
-    today = chart[i]
+cnt_up = 0
+cnt_down = 0
+for date in range(14):
+    wnsgus_today = wnsgus_money // stock[date]
+    wnsgus_money -= wnsgus_today * stock[date]
+    wnsgus_stock += wnsgus_today
 
-    # BNP 전략: 매일 최대한 많이 매수
-    buying = BNF_money // today
-    BNF_money -= buying * today
-    BNF_ju += buying
+    if date != 0:
+        if stock[date] > stock[date-1]:
+            cnt_up += 1
+            cnt_down = 0
+        elif stock[date] < stock[date-1]:
+            cnt_down += 1
+            cnt_up = 0
 
-    # TIMING 전략
-    if today < yesterday:
-        down += 1
-        up = 0
-        if down >= 3:  # 3일 연속 하락 시 전량 매수
-            buy = TIMING_money // today
-            TIMING_money -= buy * today
-            TIMING_ju += buy
-    elif today > yesterday:
-        up += 1
-        down = 0
-        if up >= 3:  # 3일 연속 상승 시 전량 매도
-            if TIMING_ju > 0:
-                TIMING_money += today * TIMING_ju
-                TIMING_ju = 0
-    else:
-        up = 0
-        down = 0
-    yesterday = today
+        else:
+            cnt_down = cnt_up = 0
 
-# 마지막 날 자산 계산
-result1 = TIMING_ju * chart[-1] + TIMING_money
-result2 = BNF_ju * chart[-1] + BNF_money
-if result1 > result2:
-    print('TIMING')
-elif result2 > result1:
-    print('BNP')
+    if cnt_up >= 3:
+        tjdals_money += tjdals_stock * stock[date]
+        tjdals_stock = 0
+
+    elif cnt_down >= 3:
+        tjdals_today = tjdals_money // stock[date]
+        tjdals_money -= tjdals_today * stock[date]
+        tjdals_stock += tjdals_today
+
+if wnsgus_money + wnsgus_stock * stock[-1] > tjdals_money + tjdals_stock * stock[-1]:
+    print("BNP")
+
+elif wnsgus_money + wnsgus_stock * stock[-1] < tjdals_money + tjdals_stock * stock[-1]:
+    print("TIMING")
 else:
-    print('SAMESAME')
+    print("SAMESAME")
+
