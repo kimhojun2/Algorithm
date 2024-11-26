@@ -1,45 +1,51 @@
 import sys
 import heapq
 
-
 input = sys.stdin.readline
 
 T = int(input())
-for tc in range(T):
-    n, d, c = map(int, input().split())
-    dic = {}
-    for _ in range(d):
-        a, b, t = map(int, input().split())
-        if b not in dic:
-            dic[b] = {a:t}
-        else:
-            dic[b][a] = t
 
-
+def dijkstra(start):
     q = []
-    heapq.heappush(q, (0, c))
-    distance = [float('inf')] * (n+1)
-    visited = [0] * (n+1)
-    distance[c] = 0
-    last = c
+    heapq.heappush(q,(0,start))
+    distance = [float('inf') for _ in range(n+1)]
+    distance[start] = 0
+
     while q:
         dist, now = heapq.heappop(q)
 
-        if visited[now] == 1:
+        if distance[now] < dist:
             continue
 
-        visited[now] = 1
         for i in dic.get(now, {}):
             cost = dist + dic[now][i]
             if cost < distance[i]:
                 distance[i] = cost
-                heapq.heappush(q, (cost,i))
+                heapq.heappush(q,(cost,i))
 
+    return distance
+
+
+
+for tc in range(T):
+    dic = {}
+    n, d, c = map(int, input().split())
+    for i in range(d):
+        a,b,s = map(int, input().split())
+
+        if b not in dic:
+            dic[b] = {a:s}
+
+        else:
+            dic[b][a] = s
+
+    ans = dijkstra(c)
     cnt = 0
-    time = 0
-    for v in range(1,n+1):
-        if visited[v]:
+    M = 0
+    for k in ans:
+        if k != float('inf'):
             cnt += 1
-            time = max(time, distance[v])
+            if k > M:
+                M = k
 
-    print(cnt, time)
+    print(cnt, M)
