@@ -18,6 +18,9 @@ void dijkstra(int start) {
 		int cost = -pq.top().first;
 		int now = pq.top().second;
 		pq.pop();
+
+		if (dist[now] < cost) continue;
+
 		for (int i = 0;i < graph[now].size();i++) {
 			int next = graph[now][i].first;
 			int new_cost = graph[now][i].second + cost;
