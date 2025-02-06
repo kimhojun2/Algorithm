@@ -1,6 +1,7 @@
 #include <iostream>
 #include <queue>
 #include <algorithm>
+#include <vector>
 
 #define INF 1e9
 using namespace std;
@@ -9,12 +10,12 @@ int N;
 int arr[125][125] = { 0, };
 int di[4] = { 0, 0, 1, -1 };
 int dj[4] = { 1, -1, 0, 0 };
-int dist[125][125];
+vector<vector<int>> dist;
 
 void dijkstra() {
     priority_queue<pair<int, pair<int, int>>> pq;
     pq.push({ -arr[0][0], {0, 0} });
-    dist[0][0] = arr[0][0];
+    dist[0][0] = arr[0][0]; // 시작 지점 초기화
 
     while (!pq.empty()) {
         int cost = -pq.top().first;
@@ -51,7 +52,7 @@ int main() {
             }
         }
 
-        fill(&dist[0][0], &dist[N - 1][N - 1] + 1, INF);
+        dist = vector<vector<int>>(N, vector<int>(N, INF));
 
         dijkstra();
 
