@@ -1,28 +1,27 @@
 #include <iostream>
-#include <vector>
+#include <algorithm>
 using namespace std;
+ 
+int main(int argc, const char *argv[]) {
+ 
+	ios_base::sync_with_stdio(false);
+	cout.tie(0);
+ 
+	int N;
+	double sum = 0;
+	cin >> N;
+ 
+	double arr[1001];
+	for(int i = 0; i < N; i++) {
+		cin >> arr[i];
+	}
+ 
+	sort(arr, arr + N);
 
-int main() {
-    int N;
-    cin >> N;
-
-    vector<int> scores(N);
-    float max_value = 0;
-
-    for (int i = 0; i < N; i++) {
-        cin >> scores[i];
-        if (scores[i] > max_value) {
-            max_value = scores[i];
-        }
-    }
-
-    float new_total = 0;
-    for (int i = 0; i < N; i++) {
-        new_total += (scores[i] / max_value) * 100;
-    }
-
-    float new_average = new_total / N;
-    cout << new_average << '\n';
-
-    return 0;
+	for(int i = 0; i < N; i++) {
+		sum = sum + (arr[i] / arr[N - 1]) * 100;
+	}
+ 
+	cout << sum / N;
+	return 0;
 }
