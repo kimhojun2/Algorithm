@@ -29,6 +29,12 @@ int main() {
 		}
 	}
 
+
+	//for (int i= 0;i < N;i++) {
+	//	for (int j = 0;j < 10;j++) {
+	//		cout << dp[i][j] << " ";
+	//	}cout << '\n';
+	//}
 	int answer = 0;
 	for (int j = 0; j < 10; j++) {
 		answer = (answer + dp[N - 1][j]) % DEV;
