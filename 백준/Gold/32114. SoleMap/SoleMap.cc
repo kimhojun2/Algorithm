@@ -33,10 +33,7 @@ int main() {
         long long car = cars[i];
         long long road = roads[i];
 
-        long long quotient = car / road;
-        long long remainder = car % road;
-
-        long long result = remainder * (quotient + 1) * (quotient + 1) + (road - remainder) * quotient * quotient;
+        long long result = (car % road) * ((car / road) + 1) * ((car / road) + 1) + (road - (car % road)) * (car / road) * (car / road);
 
         cout << result << '\n';
     }
