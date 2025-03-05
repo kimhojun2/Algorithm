@@ -4,7 +4,7 @@
 
 using namespace std;
 
-int mem[100];
+int mem[100]; 
 int cost[100];
 
 int main() {
@@ -23,7 +23,7 @@ int main() {
         Max_Cost += cost[i];
     }
 
-    vector<int> dp(Max_Cost + 1, 0);
+    vector<int>dp(Max_Cost+1, 0);
 
     for (int i = 0; i < N; i++) {
         int now_mem = mem[i];
