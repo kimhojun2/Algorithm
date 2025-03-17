@@ -1,29 +1,32 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+
 using namespace std;
 
 int N, L, R;
-int ans = 0;
-int dy[4] = { 0, 0, 1, -1 };
-int dx[4] = { 1, -1, 0, 0 };
-bool BP = true;
-queue<pair<int, int>> q;
-vector<vector<int>> arr;
+int arr[50][50];
+bool start = true;
+int answer = 0;
+int dy[] = { 0, 0, 1, -1 };
+int dx[] = { 1, -1, 0, 0 };
 
-void move(vector<vector<int>>& visited) {
-    bool moved = false;
+void check() {
+    vector<vector<bool>> visited(N, vector<bool>(N, false));
 
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
-            if (visited[i][j] == 0) {
-                visited[i][j] = 1;
+            if (!visited[i][j]) {
+                visited[i][j] = true;
+
                 vector<pair<int, int>> lst;
-                q.push(make_pair(i, j));
+                lst.push_back({ i, j });
+
+                queue<pair<int, int>> q;
+                q.push({ i, j });
+
                 int cnt_area = 1;
                 int sum_area = arr[i][j];
-                lst.push_back(make_pair(i, j));
-
 
                 while (!q.empty()) {
                     int y = q.front().first;
@@ -34,61 +37,51 @@ void move(vector<vector<int>>& visited) {
                         int ny = y + dy[d];
                         int nx = x + dx[d];
 
+                        if (ny < 0 || nx < 0 || ny >= N || nx >= N) continue;
+                        if (visited[ny][nx]) continue;
 
-                        if (ny < 0 || nx < 0 || ny >= N || nx >= N || visited[ny][nx] == 1) {
-                            continue;
-                        }
+                        int next = arr[ny][nx];
 
-
-                        if (L <= abs(arr[y][x] - arr[ny][nx]) && abs(arr[y][x] - arr[ny][nx]) <= R) {
-                            q.push(make_pair(ny, nx));
-                            visited[ny][nx] = 1;
+                        if (L <= abs(arr[y][x] - next) && abs(arr[y][x] - next) <= R) {
+                            q.push({ ny, nx });
+                            visited[ny][nx] = true;
                             cnt_area++;
-                            sum_area += arr[ny][nx];
-                            lst.push_back(make_pair(ny, nx));
+                            sum_area += next;
+                            lst.push_back({ ny, nx });
                         }
                     }
                 }
 
                 if (cnt_area > 1) {
-                    int new_population = sum_area / cnt_area;
-                    for (auto& p : lst) {
-                        arr[p.first][p.second] = new_population;
+                    int change = sum_area / cnt_area;
+                    for (auto& com : lst) {
+                        arr[com.first][com.second] = change;
                     }
-                    moved = true;
+                    start = true;
                 }
             }
         }
     }
-
-    if (moved) {
-        BP = true;
-        ans++;
-    }
 }
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(NULL);
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
 
     cin >> N >> L >> R;
-    arr.resize(N, vector<int>(N));
-
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
             cin >> arr[i][j];
         }
     }
 
-    vector<vector<int>> visited(N, vector<int>(N, 0));
-
-    while (BP) {
-        BP = false;
-        fill(visited.begin(), visited.end(), vector<int>(N, 0));
-        move(visited);
+    while (start) {
+        start = false;
+        check();
+        if (start) answer++;
     }
 
-    cout << ans;
-
+    cout << answer;
     return 0;
 }
