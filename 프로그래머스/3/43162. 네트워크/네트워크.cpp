@@ -14,11 +14,11 @@ int solution(int n, vector<vector<int>> computers) {
         while(!q.empty()){
             int now = q.front();
             q.pop();
-            for(int next = 0;next<computers[now].size();next++){
-                if(computers[now][next] !=1) continue;
-                if(visited[next]) continue;
-                q.push(next);
-                visited[next] = true;
+            for(int j = 0;j<computers[now].size();j++){
+                if(computers[now][j] != 1) continue;
+                if(visited[j]) continue;
+                q.push(j);
+                visited[j] = true;
             }
         }
         answer++;
