@@ -1,31 +1,21 @@
-from collections import deque
-
 def solution(n, computers):
     answer = 0
-    visited = [0] * n     
-    # di = [1,-1,0,0]
-    # dj = [0,0,1,-1]
-    
-    def bfs(i):
-        q = deque()
-        q.append(i)
-        visited[i] = 1
-        
-        while q:
-            y = q.popleft()
-            
-            for c in range(n):
-                if computers[y][c] == 1 and visited[c] == 0:
-                    visited[c] = 1
-                    q.append(c)
-        
-        return
-        
-    
-    for i in range(n):
-        if visited[i] == 0:
-            answer +=1
-            bfs(i)
-            
-            
+    visited = [False for i in range(n)]
+    for com in range(n):
+        if visited[com] == False:
+            BFS(n, computers, com, visited)
+            answer += 1
     return answer
+
+def BFS(n, computers, com, visited):
+    from collections import deque
+    visited[com] = True
+    queue = deque()
+    queue.append(com)
+    while len(queue) != 0:
+        com = queue.popleft()
+        visited[com] = True
+        for connect in range(n):
+            if connect != com and computers[com][connect] == 1:
+                if visited[connect] == False:
+                    queue.append(connect)
