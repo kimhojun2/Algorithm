@@ -1,40 +1,45 @@
 from collections import deque
 
-di = [0, 0, 1, -1]
-dj = [1, -1, 0, 0]
+dy = [0,0,1,-1]
+dx = [1,-1,0,0]
+q = deque()
+
+def bfs(i,j,Y,X,land,visited):
+    q.append((i,j))
+    land[i][j] = 0
+    cnt = 1
+    garo = {j}
+    while q:
+        y, x = q.popleft()
+        for d in range(4):
+            ny, nx = y + dy[d], x + dx[d]
+            if ny<0 or nx<0 or ny>=Y or nx>=X or land[ny][nx] == 0:
+                continue
+            land[ny][nx] = 0
+            cnt += 1
+            q.append((ny,nx))
+            if d==0 or d==1:
+                garo.add(nx)
+
+    for idx in garo:
+        visited[idx] += cnt
+    
+    return
+
+
 
 def solution(land):
-    N = len(land)
-    M = len(land[0])
-    visited = [[0] * M for _ in range(N)]
     answer = 0
-
-    def bfs(i, j):
-        q = deque([(i, j)])
-        visited[i][j] = 1
-        total = 0
-        check = set()
-        
-        while q:
-            y, x = q.popleft()
-            total += 1
-            check.add(x)
-            for d in range(4):
-                ny, nx = y + di[d], x + dj[d]
-                if 0 <= ny < N and 0 <= nx < M and not visited[ny][nx] and land[ny][nx] == 1:
-                    visited[ny][nx] = 1
-                    q.append((ny, nx))
-        
-        return total, check
-
-    column = [0] * M
-
-    for i in range(N):
-        for j in range(M):
-            if land[i][j] == 1 and not visited[i][j]:
-                oil, cols = bfs(i, j)
-                for col in cols:
-                    column[col] += oil
-
-    answer = max(column)
+    Y = len(land)
+    X = len(land[0])
+    
+    visited = [0] * X
+    
+    for i in range(Y):
+        for j in range(X):
+            if land[i][j] == 1:
+                bfs(i,j,Y,X,land,visited)
+                
+    answer = max(visited)
+                
     return answer
