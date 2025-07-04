@@ -1,46 +1,45 @@
-import sys
+from collections import defaultdict
 import heapq
 
-input = sys.stdin.readline
-
 N, M, K = map(int, input().split())
-dic = {}
+
+graph = defaultdict(dict)
+
+distance = [float('INF')] * (N+1)
+
 for i in range(M):
-    s,e,v = map(int, input().split())
-    if e not in dic:
-        dic[e] = {s:v}
-    else:
-        dic[e][s] = v
+    s, e, v = map(int, input().split())
+    if s not in graph[e] or graph[e][s] > v:
+        graph[e][s] = v
 
-lst = list(map(int, input().split()))
-q = []
-distance = [float('inf') for _ in range(N+1)]
-def dijkstra():
-
-    while q:
-        dist, now = heapq.heappop(q)
-
-        if distance[now] < dist:
-            continue
-
-        for new in dic.get(now, {}):
-            cost = dist + dic[now][new]
-            if cost < distance[new]:
-                distance[new] = cost
-                heapq.heappush(q,(cost, new))
+company = list(map(int, input().split()))
 
 
-for city in lst:
-    heapq.heappush(q,(0,city))
-    distance[city] = 0
+def dijkstra(start):
+    hq = []
+    heapq.heappush(hq,(0,start))
+    distance[start] = 0
 
-dijkstra()
-max_v = -1
-max_i = -1
-for idx,value in enumerate(distance[1:]):
-    if value > max_v:
-        max_i = idx + 1
-        max_v = value
+    while hq:
+        dist, now = heapq.heappop(hq)
 
-print(max_i)
-print(max_v)
+        if distance[now] < dist: continue
+
+        for next, d in graph[now].items():
+            cost = dist + d
+            if distance[next] > cost:
+                distance[next] = cost
+                heapq.heappush(hq,(cost,next))
+
+
+    return
+
+
+for com in company:
+    dijkstra(com)
+
+ans = max(distance[1:])
+idx = distance.index(ans)
+
+print(idx)
+print(ans)
