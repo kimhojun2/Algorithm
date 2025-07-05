@@ -1,43 +1,30 @@
 L, C = map(int, input().split())
+lst = list(input().split())
+lst.sort()
+check = ['a','e','i','o','u']
+visited = [0]*C
 
-arr = list(input().split())
-a = ['a', 'e', 'i', 'o', 'u']
-visited = [0] * C
-ans = []
-realans = []
-def letter(level, mo, ja):
-    if level == L:
-        if mo >= 1 and ja >= 2:
-            real = ''.join(ans)
-            realans.append(real)
-            return
+ahdma = 0
+wkdma = 0
+def back(idx, word):
+    global ahdma, wkdma
 
-    for i in range(C):
-        if not visited[i]:
-            if arr[i] in a:
-                if ans:
-                    if ans[-1] > arr[i]:
-                        continue
+    if len(word) + (C-idx-1) < L: return
 
-                visited[i] = 1
-                ans.append(arr[i])
-                letter(level + 1, mo+1, ja)
-                visited[i] = 0
-                ans.pop()
+    if len(word) == L and ahdma > 0 and wkdma > 1:
+        print(word)
+        return
+
+    for i in range(idx+1, C):
+        now = lst[i]
+        if now in check:
+            ahdma += 1
+            back(i,word+now)
+            ahdma -= 1
+        else:
+            wkdma += 1
+            back(i, word+now)
+            wkdma -= 1
 
 
-            else:
-                if ans:
-                    if ans[-1] > arr[i]:
-                        continue
-                visited[i] = 1
-                ans.append(arr[i])
-                letter(level+1, mo, ja+1)
-                visited[i] = 0
-                ans.pop()
-
-letter(0,0,0)
-box = sorted(realans)
-
-for b in box:
-    print(b)
+ans = back(-1, '')
