@@ -1,38 +1,30 @@
-import sys
 from collections import deque
 
-input = sys.stdin.readline
+def bfs(start):
+    visited = [0] * (N + 1)
+    visited[start] = 1
+    q = deque()
+    q.append(start)
+
+    while q:
+        now = q.popleft()
+        for i in range(1, N + 1):
+            if not visited[i] and graph[now - 1][i - 1] == 1:
+                visited[i] = 1
+                q.append(i)
+
+    return visited
 
 N = int(input())
 M = int(input())
-arr = list(list(map(int, input().split())) for _ in range(N))
-
+graph = [list(map(int, input().split())) for _ in range(N)]
 plan = list(map(int, input().split()))
-dic = {i : [] for i in range(N)}
-for i in range(N):
-    for j in range(N):
-        if i != j and arr[i][j] == 1:
-            dic[i].append(j)
 
-q = deque()
-visited = [0] * N
-q.append(plan[0]-1)
-visited[plan[0]-1] = 1
-while q:
-    now = q.popleft()
-    for i in dic[now]:
-        if visited[i] == 0:
-            q.append(i)
-            visited[i] = 1
+visited = bfs(plan[0])
 
-
-suc = True
-for i in plan:
-    if visited[i-1] == 0:
-        suc = False
+for city in plan:
+    if not visited[city]:
+        print('NO')
         break
-
-if suc:
-    print('YES')
 else:
-    print('NO')
+    print('YES')
