@@ -1,49 +1,28 @@
-import sys
-import heapq
+n = int(input())
+m = int(input())
 
-input = sys.stdin.readline
+distance = [[float('INF')]*(n+1) for _ in range(n+1)]
 
-N = int(input())
-M = int(input())
-
-dic = {}
-
-for m in range(M):
-    a, b, c = map(int, input().split())
-    if a not in dic:
-        dic[a] = {b:c}
-    else:
-        if b in dic[a]:
-            if dic[a][b] > c:
-                dic[a][b] = c
-        else:
-            dic[a][b] = c
+for i in range(1,n+1):
+    distance[i][i] = 0
 
 
-def dijkstra(start):
-    q = []
-    heapq.heappush(q, (0, start))
-    distance[start] = 0
+for i in range(m):
+    s,e,v = map(int, input().split())
+    distance[s][e] = min(distance[s][e], v)
 
-    while q:
-        dist, now = heapq.heappop(q)
 
-        if distance[now] < dist:
-            continue
+for k in range(1,n+1):
+    for i in range(1,n+1):
+        for j in range(1,n+1):
+            if distance[i][j] > distance[i][k] + distance[k][j]:
+                distance[i][j] = distance[i][k] + distance[k][j]
 
-        for i in dic.get(now, {}):
-            cost = dist + dic[now][i]
-            if cost < distance[i]:
-                distance[i] = cost
-                heapq.heappush(q, (cost, i))
 
-for j in range(1, N+1):
-    distance = [float('inf') for _ in range(N + 1)]
-    dijkstra(j)
-    for d in distance[1:]:
-        if d == float('inf'):
-            print(0, end =' ')
-        else:
-            print(d, end=' ')
+for i in range(1,n+1):
+    for j in range(1,n+1):
+        if distance[i][j] == float('INF'):
+            distance[i][j] = 0
+        print(distance[i][j], end=' ')
 
     print()
