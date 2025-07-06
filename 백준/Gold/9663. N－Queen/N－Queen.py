@@ -1,26 +1,22 @@
-import sys
-
-input = sys.stdin.readline
-N = int(input())
-ans = 0
-
-cols = [0] * N
-diag1 = [0] * (2 * N - 1)
-diag2 = [0] * (2 * N - 1)
-
-def solve(y):
+def backtracking(n):
     global ans
-    if y == N:
+    if n == N:
         ans += 1
         return
 
-    for x in range(N):
-        if cols[x] or diag1[y + x] or diag2[y - x + (N - 1)]:
-            continue
+    for j in range(N):
+        if v1[j] == v2[n+j] == v3[n-j] == 0:
+            v1[j] = v2[n + j] = v3[n - j] = 1
+            backtracking(n+1)
+            v1[j] = v2[n + j] = v3[n - j] = 0
 
-        cols[x] = diag1[y + x] = diag2[y - x + (N - 1)] = 1
-        solve(y + 1)
-        cols[x] = diag1[y + x] = diag2[y - x + (N - 1)] = 0
 
-solve(0)
+N = int(input())
+ans = 0
+v1 = [0]*N
+v2 = [0]*(2*N)
+v3 = [0]*(2*N)
+
+backtracking(0)
+
 print(ans)
