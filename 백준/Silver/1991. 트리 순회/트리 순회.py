@@ -3,29 +3,32 @@ N = int(input())
 tree = {}
 
 for i in range(N):
-    node, left, right = input().split()
+    root, left, right = input().split()
+    tree[root] = [left, right]
 
-    tree[node] = [left, right]
-
-
-def preorder(nd):
-    if nd != '.':
-        print(nd, end='')
-        preorder(tree[nd][0])
-        preorder(tree[nd][1])
+def preorder(root):
+    if root != '.':
+        print(root, end='')
+        preorder(tree[root][0])
+        preorder(tree[root][1])
 
 
-def inorder(nd):
-    if nd != '.':
-        inorder(tree[nd][0])
-        print(nd, end='')
-        inorder(tree[nd][1])
 
-def postorder(nd):
-    if nd != '.':
-        postorder(tree[nd][0])
-        postorder(tree[nd][1])
-        print(nd, end='')
+def inorder(root):
+    if root != '.':
+        inorder(tree[root][0])
+        print(root, end='')
+        inorder(tree[root][1])
+    return
+
+
+def postorder(root):
+    if root != '.':
+        postorder(tree[root][0])
+        postorder(tree[root][1])
+        print(root, end='')
+    return
+
 
 preorder('A')
 print()
