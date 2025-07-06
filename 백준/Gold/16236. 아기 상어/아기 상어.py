@@ -1,63 +1,62 @@
-import sys
 from collections import deque
+import heapq
+
 N = int(input())
 
-dx = [-1,0,0,1]
-dy = [0,-1,1,0]
-arr = []
-size = 2
-cnt = 0
+graph = []
+shark_y, shark_x, shark_size = -1, -1, 2
 
 for i in range(N):
-    arr.append([int(x) for x in sys.stdin.readline().rstrip().split()])
-    for j in range(len(arr[i])):
-        if arr[i][j] == 9:
-            arr[i][j] = 0
-            shark_x, shark_y = i, j
+    lst = list(map(int, input().split()))
+    graph.append(lst)
+    if shark_y != -1 and shark_x != -1: continue
+    for j in range(N):
+        if lst[j] == 9:
+            shark_y, shark_x = i, j
+            lst[j] = 0
+            break
 
-def finding_fish(sx,sy):
-    global size
-    deq = deque()
-    deq.append([sx,sy])
+dy = [0,0,1,-1]
+dx = [1,-1,0,0]
 
-    visited = [[False for _ in range(N)] for _ in range(N)]
-    distance = [[0 for _ in range(N)] for _ in range(N)]
-    can_eat_fish = []
+def next_fish(sy, sx):
+    q = deque()
+    q.append((sy,sx))
 
-    while deq:
-        x, y = deq.popleft()
+    visited = [[0]*N for _ in range(N)]
+    visited[sy][sx] = 1
 
-        for i in range(4):
-            nx, ny = x + dx[i], y + dy[i]
-            if 0 <= nx < N and 0 <= ny < N:
-                if arr[nx][ny] <= size and not visited[nx][ny]:
-                    visited[nx][ny] = True
-                    distance[nx][ny] = distance[x][y] + 1
-                    deq.append([nx,ny])
+    fishes = []
 
-                    if arr[nx][ny] < size and arr[nx][ny] != 0:
-                        can_eat_fish.append([nx ,ny,distance[nx][ny]])
+    while q:
+        y, x = q.popleft()
 
-    can_eat_fish.sort(key= lambda x : (x[2],x[0],x[1]))
-    return can_eat_fish
+        for d in range(4):
+            ny, nx = y+dy[d], x+dx[d]
+            if 0<= ny<N and 0<=nx<N and not visited[ny][nx] and graph[ny][nx] <= shark_size:
+                visited[ny][nx] = visited[y][x] + 1
+                q.append((ny,nx))
+                if graph[ny][nx] != 0 and graph[ny][nx] < shark_size:
+                    heapq.heappush(fishes, (visited[ny][nx]-1, ny, nx))
 
+    if fishes: return heapq.heappop(fishes)
+    else: return 0
 
-ans = 0
-
+time = 0
+cnt = 0
 while True:
-    fishlist = finding_fish(shark_x,shark_y)
-
-    if len(fishlist) == 0:
-        print(ans)
-        exit(0)
-
-    shark_x, shark_y, move_time = fishlist[0]
+    next = next_fish(shark_y, shark_x)
+    if  next == 0: break
+    else:
+        plus_time, shark_y, shark_x = next[0], next[1], next[2]
 
     cnt += 1
-    if size == cnt:
+    if cnt == shark_size:
+        shark_size += 1
         cnt = 0
-        size += 1
 
-    arr[shark_x][shark_y] = 0
-    ans += move_time
-   
+    time += plus_time
+    graph[shark_y][shark_x] = 0
+
+
+print(time)
