@@ -1,52 +1,33 @@
-import sys
-import heapq
+n,m,r = map(int, input().split())
 
-input = sys.stdin.readline
+items = [0] + list(map(int, input().split()))
 
-n, m, r = map(int, input().split())
-arr = list(map(int, input().split()))
-dic = {}
-for _ in range(r):
-    a, b, l = map(int, input().split())
-    if a not in dic:
-        dic[a] = {b:l}
-    else:
-        dic[a][b] = l
+graph = [[float('INF')] * (n+1) for _ in range(n+1)]
+for i in range(1,n+1):
+    graph[i][i] = 0
 
-    if b not in dic:
-        dic[b] = {a:l}
-
-    else:
-        dic[b][a] = l
+for i in range(r):
+    s,e,v = map(int, input().split())
+    graph[s][e] = v
+    graph[e][s] = v
 
 
-def dijkstra(start, limit):
-    q = []
-    heapq.heappush(q,(0,start))
-    distance[start] = 0
-    total = 0
-    while q:
-        dist, now = heapq.heappop(q)
-
-        if dist > distance[now]:
-            continue
-
-        for i in dic.get(now, {}):
-            cost = dist + dic[now][i]
-            if cost < distance[i] and cost <= limit:
-                distance[i] = cost
-                heapq.heappush(q,(cost,i))
-
-    for d in range(len(distance[1:])):
-        if distance[d+1] != float('inf'):
-            total += arr[d]
-    return total
+for k in range(1,n+1):
+    for i in range(1,n+1):
+        for j in range(1,n+1):
+            if graph[i][j] > graph[i][k] + graph[k][j]:
+                graph[i][j] = graph[i][k] + graph[k][j]
 
 
-ans = 0
-for s in range(1, n+1):
-    distance = [float('inf') for _ in range(n+1)]
-    aaa = dijkstra(s, m)
-    ans = max(ans, aaa)
+result = 0
 
-print(ans)
+for i in range(1,n+1):
+    now = 0
+    for j in range(1,n+1):
+        if graph[i][j] <= m:
+            now += items[j]
+
+    if now > result:
+        result = now
+
+print(result)
