@@ -1,30 +1,30 @@
 import sys
-import heapq
-
 input = sys.stdin.readline
 
 N = int(input())
 
-arr = list(map(int, input().split()))
+lst = list(map(int, input().split()))
+new_lst = []
+ans = [0]*N
 
-heap = []
-
-for idx, value in enumerate(arr):
-    new = (value, idx)
-    heapq.heappush(heap,new)
+for idx, num in enumerate(lst):
+    new_lst.append((num,idx))
 
 
-back_value = -float('inf')
-new_idx = -1
-ans= []
-while heap:
-    v, n = heapq.heappop(heap)
-    if v > back_value:
-        new_idx += 1
-        back_value = v
-    ans.append((n, new_idx))
+new_lst.sort()
+latest_value = -1e9
+latest_idx = 0
+next_idx = 0
+for now in new_lst:
+    value = now[0]
+    before_idx = now[1]
 
-ans.sort()
+    if value > latest_value:
+        ans[before_idx] = next_idx
+        latest_idx = next_idx
+        next_idx += 1
+        latest_value = value
+    else:
+        ans[before_idx] = latest_idx
 
-for i in ans:
-    print(i[1], end=' ')
+print(*ans)
