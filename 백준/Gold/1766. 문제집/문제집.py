@@ -1,30 +1,32 @@
+from collections import deque
 import heapq
+
+
+def problems():
+    q = []
+
+    for i in range(N):
+        if indegree[i] == 0:
+            heapq.heappush(q,i)
+
+
+    while q:
+        now = heapq.heappop(q)
+        print(now+1, end=" ")
+
+        for next in graph[now]:
+            indegree[next] -= 1
+            if indegree[next] == 0:
+                heapq.heappush(q, next)
 
 N, M = map(int, input().split())
 
-dic = {}
-check = [0] * (N+1)
+graph = [[] for _ in range(N)]
+indegree = [0] * N
+
 for m in range(M):
     A, B = map(int, input().split())
-    if A not in dic:
-        dic[A] = []
-    dic[A].append(B)
-    check[B] += 1 
+    graph[A-1].append(B-1)
+    indegree[B-1] += 1
 
-q = []
-for i in range(1, N+1):
-    if check[i] == 0:
-        heapq.heappush(q, i)
-
-ans = []
-while q:
-    now = heapq.heappop(q)
-    ans.append(now)
-
-    for next in dic.get(now, []): 
-        check[next] -= 1 
-
-        if check[next] == 0: 
-            heapq.heappush(q, next)
-
-print(*ans)
+problems()
