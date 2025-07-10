@@ -1,43 +1,37 @@
+from collections import defaultdict
+import heapq
 import sys
-
 input = sys.stdin.readline
+
+def line():
+    ans =[]
+    q= []
+    for i in range(1,N+1):
+        if indgree[i] == 0:
+            heapq.heappush(q,i)
+
+    while q:
+        now = q.pop()
+        ans.append(now)
+
+        for np in graph[now]:
+            indgree[np] -= 1
+            if indgree[np] == 0:
+                heapq.heappush(q,np)
+
+
+    return ans
+
 
 N, M = map(int, input().split())
 
-dict = {}
+graph = defaultdict(list)
+indgree = [0] * (N + 1)
 
-for _ in range(M):
+for m in range(M):
     A, B = map(int, input().split())
-    if B not in dict:
-        dict[B] = [A]
-    else:
-        dict[B].append(A)
+    graph[A].append(B)
+    indgree[B] += 1
 
-ans = []
-visited = [0] * (N+1)
-def func(num):
-    for p in dict[num]:
-        if not visited[p]:
-            visited[p] = 1
-            if p in dict:
-                func(p)
-            else:
-                print(p, end=' ')
-
-    print(num, end=' ')
-
-if N == 1:
-    print(1)
-else:
-    for i in dict:
-        if not visited[i]:
-            visited[i] = 1
-            func(i)
-
-    for n in range(1, N+1):
-        if visited[n] == 0:
-            print(n, end=' ')
-#
-#
-# print(dict)
-# print(visited)
+answer = line()
+print(*answer)
