@@ -1,23 +1,17 @@
-# 11047 동전 0
-from collections import deque
+import heapq
 
 N, K = map(int, input().split())
-
-money = deque()
+heap = []
 for i in range(N):
-    m = int(input())
-    money.appendleft(m)
+    value = int(input())
+    heapq.heappush(heap,-value)
 
-cnt = 0
-for j in range(N):
-    if K - money[j] < 0:
-        pass
+ans = 0
+while K>0:
+    now = -heapq.heappop(heap)
+    if now > K: continue
+    V = K//now
+    ans += V
+    K -= (V*now)
 
-    elif K - money[j] >= 0:
-        while K >= money[j]:
-            K -= money[j]
-            cnt += 1
-    else:
-        break
-
-print(cnt)
+print(ans)
