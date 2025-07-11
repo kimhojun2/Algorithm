@@ -1,37 +1,37 @@
-import sys
 from collections import deque
 
-input = sys.stdin.readline
+def check_right(check, dir, rotates):
+    if check >= 3:
+        return
+    if now[check][1] != now[check+1][0]:
+        rotates.append((check+1, -dir))
+        check_right(check+1, -dir, rotates)
 
-dic = {i: deque(map(int, input().strip())) for i in range(1, 5)}
+def check_left(check, dir, rotates):
+    if check <= 0:
+        return
+    if now[check][0] != now[check-1][1]:
+        rotates.append((check-1, -dir))
+        check_left(check-1, -dir, rotates)
+
+lst = [deque(input()) for _ in range(4)]
+
 K = int(input())
 
-
 for _ in range(K):
-    idx, dir = map(int, input().split())
-    move = [(idx, dir)]
+    n, d = map(int, input().split())
+    now = [[lst[i][6], lst[i][2]] for i in range(4)]
 
+    rotates = [(n-1, d)]
+    check_right(n-1, d, rotates)
+    check_left(n-1, d, rotates)
 
-    cur_dir = dir
-    for j in range(idx + 1, 5):
-        if dic[j - 1][2] != dic[j][6]:
-            cur_dir = -cur_dir
-            move.append((j, cur_dir))
-        else:
-            break
+    for idx, dir in rotates:
+        lst[idx].rotate(dir)
 
+ans = 0
+for i in range(4):
+    if lst[i][0] == '1':
+        ans += 2**i
 
-    cur_dir = dir
-    for j in range(idx - 1, 0, -1):
-        if dic[j][2] != dic[j + 1][6]:
-            cur_dir = -cur_dir
-            move.append((j, cur_dir))
-        else:
-            break
-
-
-    for now, now_dir in move:
-        dic[now].rotate(now_dir)
-
-ans = sum((2 ** (i - 1)) for i in range(1, 5) if dic[i][0] == 1)
 print(ans)
