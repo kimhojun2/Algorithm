@@ -19,7 +19,7 @@ int main() {
         if (now == '+' || now == '-') {
             if (minus) ans -= stoi(num);
             else ans += stoi(num);
-            num.clear();
+            num = "";
 
             if (now == '-') minus = true;
         }
