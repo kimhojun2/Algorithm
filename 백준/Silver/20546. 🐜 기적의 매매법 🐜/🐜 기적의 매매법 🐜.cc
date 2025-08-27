@@ -1,8 +1,6 @@
 #include <iostream>
 using namespace std;
 
-int prices[14];
-
 int main() {
 	ios::sync_with_stdio(0);
 	cin.tie(0);
@@ -13,14 +11,11 @@ int main() {
 	int scash = start;
 	int last;
 	int up=0, down=0;
-	for (int i = 0;i < 14;i++) {
-		cin >> prices[i];
-	}
-
+	int price;
 	int jstock = 0;
 	int sstock = 0;
 	for (int i = 0;i < 14;i++) {
-		int price = prices[i];
+		cin >> price;
 		if (jcash >= price) {
 			int jcnt = jcash / price;
 			jstock += jcnt;
