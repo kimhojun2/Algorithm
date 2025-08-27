@@ -1,52 +1,54 @@
 #include <iostream>
-#include <set>
+#include <algorithm>
+#include <string>
 using namespace std;
 
+char ahdmas[] = { 'a','e','i','o','u' };
+
 int main() {
-	string input = " ";
-	set<char> vowels = {'a','e','i','o','u'};
-	//consonant
-	while (true) {
-		cin >> input;
+	ios::sync_with_stdio(0);
+	cin.tie(0);
 
-		if (input == "end") {
-			break;
-		}
-		bool vowel = false;
-		bool error = false;
-		int v_cnt = 0;
-		int c_cnt = 0;
-		char last = 'A';
-		for (int i = 0;i < input.size();i++) {
-			if (input[i] == last && (input[i] != 'e'&&input[i]!='o')) {
-				error = true;
-				break;
-			}
+	string now;
 
-			if (vowels.count(input[i])) {
-				vowel = true;
-				v_cnt++;
-				c_cnt = 0;
+	while (1) {
+		cin >> now;
+		if (now == "end") break;
+		bool rule1 = false;
+		bool rule2 = true;
+		bool rule3 = true;
+		int rule2_a = 0;
+		int rule2_b = 0;
+		char before = 'A';
+		for (char check : now) {
+			if (find(ahdmas, ahdmas + 5, check) != ahdmas + 5) {
+				rule1 = true;
+				if (rule2_a == 2) {
+					rule2 = false; break;
+				}
+				else {
+					rule2_a++;
+					rule2_b = 0;
+				}
 			}
 			else {
-				v_cnt = 0;
-				c_cnt++;
+				if (rule2_b == 2) {
+					rule2 = false; break;
+				}
+				else {
+					rule2_b++;
+					rule2_a = 0;
+				}
 			}
-			if (c_cnt == 3 || v_cnt == 3) {
-				error = true;
-				break;
+			if (check == before && check != 'e' && check != 'o') {
+				rule3 = false; break;
 			}
-			last = input[i];
+			before = check;
 		}
-		if (!vowel || error) {
-			cout << "<" << input << "> is not acceptable." << '\n';
-		}
-		else {
-			cout << "<" << input << "> is acceptable." << '\n';
-		}
-		vowel = false;
-		error = false;
+		if (rule1 && rule2 && rule3) cout << '<' << now << '>' << " is acceptable." << '\n';
+		else cout << '<' << now << '>' << " is not acceptable." << '\n';
 	}
+
 
 	return 0;
 }
