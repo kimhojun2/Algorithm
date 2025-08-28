@@ -1,44 +1,54 @@
 #include <iostream>
+#include <queue>
 #include <vector>
-
 using namespace std;
 
-vector<vector<int>>arr;
-vector<int>visited;
+void bfs(int start, vector<vector<int>> &graph,vector<bool>& visited) {
+	queue<int>q;
+	q.push(start);
 
-void dfs(int start) {
-	visited[start] = 1;
-	for (int i = 0;i < arr[start].size();i++) {
-		int next = arr[start].at(i);
-		if (!visited[next]) {
-			dfs(next);
+	while (!q.empty()) {
+		int now = q.front();
+		q.pop();
+
+		for (int i = 0;i < graph[now].size();i++) {
+			int next = graph[now][i];
+			if (!visited[next]) {
+				visited[next] = true;
+				q.push(next);
+			}
 		}
+
 	}
+
 }
 
-
-
-
 int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+
 	int N, M;
 	cin >> N >> M;
 
-	arr = vector<vector<int>>(N + 1);
-	visited = vector<int>(N + 1, 0);
+	vector<vector<int>>graph(N + 1);
 
 	for (int i = 0;i < M;i++) {
-		int s, e;
-		cin >> s >> e;
-		arr[s].push_back(e);
-		arr[e].push_back(s);
+		int u, v;
+		cin >> u >> v;
+		graph[u].push_back(v);
+		graph[v].push_back(u);
 	}
+
+	vector<bool>visited(N + 1, false);
 	int ans = 0;
 	for (int i = 1;i <= N;i++) {
 		if (!visited[i]) {
-			dfs(i);
 			ans++;
+			visited[i] = true;
+			bfs(i, graph, visited);
 		}
 	}
+
 	cout << ans;
 
 	return 0;
