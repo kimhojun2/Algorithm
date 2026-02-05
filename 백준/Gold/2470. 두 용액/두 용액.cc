@@ -1,39 +1,42 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+
 using namespace std;
 
 int N;
+int arr[100000];
 
 int main() {
 	ios::sync_with_stdio(0);
 	cin.tie(0);
 
 	cin >> N;
-	
-	vector<int>arr(N, 0);
 	for (int i = 0;i < N;i++) {
 		cin >> arr[i];
 	}
+	sort(arr, arr + N);
 
-	sort(arr.begin(), arr.end());
+	int left_idx = 0;
+	int right_idx = N-1;
+	int ans = 2e9;
+	pair<int, int>idx;
 
-	int left = 0, right = N-1, ans_left = 0, ans_right = N-1;
-	int ans = abs(arr[left] + arr[right]);
-	
-	while (left < right) {
-		int now = arr[left] + arr[right];
+	while (left_idx < right_idx) {
+		int now = arr[right_idx] + arr[left_idx];
 		if (abs(now) < ans) {
 			ans = abs(now);
-			ans_left = left;
-			ans_right = right;
+			idx.first = arr[left_idx];
+			idx.second = arr[right_idx];
 		}
-		if (now < 0)left++;
-		else right--;
+		if (now == 0) break;
 
+		if (now > 0)right_idx--;
+		else left_idx++;
 	}
 
-	cout << arr[ans_left] << " " << arr[ans_right];
+	cout << idx.first << " " << idx.second;
+
 
 	return 0;
 }
