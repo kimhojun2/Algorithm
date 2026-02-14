@@ -1,29 +1,42 @@
 #include <iostream>
-#include <cmath>
+#include <algorithm>
 using namespace std;
 
-int main()
-{
-	int T, x1, y1, r1, x2, y2, r2;
+int T;
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+
 	cin >> T;
-
-	while (T--)
-	{
+	while (T--) {
+		long long x1, y1, r1, x2, y2, r2;
 		cin >> x1 >> y1 >> r1 >> x2 >> y2 >> r2;
-		double d = sqrt(pow((x1 - x2), 2) + pow((y1 - y2), 2));
 
-		if (d == 0 && r1 == r2)
-			cout << -1;
+		long long dx = x1 - x2;
+		long long dy = y1 - y2;
+		long long d2 = dx * dx + dy * dy;
 
-		else if (d > r1 + r2 || d < abs(r1 - r2))
-			cout << 0;
+		if (dx == 0 && dy == 0) {
+			if (r1 == r2) cout << -1 << '\n';
+			else cout << 0 << '\n';
+			continue;
+		}
 
-		else if (d == r1 + r2 || d == abs(r1 - r2))
-			cout << 1;
+		long long sum = r1 + r2;
+		long long diff = llabs(r1 - r2);
 
-		else if (d < r1 + r2)
-			cout << 2;
+		long long sum2 = sum * sum;
+		long long diff2 = diff * diff;
 
-		cout << "\n";
+		if (d2 > sum2) cout << 0 << '\n';
+		else if (d2 == sum2) cout << 1 << '\n';
+		else {
+			if (d2 < diff2) cout << 0 << '\n';
+			else if (d2 == diff2) cout << 1 << '\n';
+			else cout << 2 << '\n';
+		}
 	}
+
+	return 0;
 }
