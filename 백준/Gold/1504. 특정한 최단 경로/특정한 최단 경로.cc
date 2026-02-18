@@ -1,61 +1,64 @@
 #include <iostream>
+#include <algorithm>
 #include <vector>
 #include <queue>
-#define MAX 801
-#define INF 123456789
 using namespace std;
 
-int n, e, x, y;
-vector<pair<int, int>>v[MAX + 1];
-int dist[MAX + 1];
+int N, E;
+int v1, v2;
 
-void dijkstra(int start) {
-	for (int i = 1; i <= n; i++) dist[i] = INF;
-	priority_queue<pair<int, int>>pq;
+const int INF = 1e9;
+
+vector<int> dijkstra(int start, vector<vector<pair<int, int>>>& adj) {
+	priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>>pq;
+	vector<int>distance(N + 1, INF);
 	pq.push({ 0,start });
-	dist[start] = 0;
+	distance[start] = 0;
+
 	while (!pq.empty()) {
-		int cost = -pq.top().first;
-		int cur = pq.top().second;
+		int curr = pq.top().second;
+		int dist = pq.top().first;
 		pq.pop();
-		if (dist[cur] < cost) continue;
-		for (int i = 0; i < v[cur].size(); i++) {
-			int next = v[cur][i].first;
-			int newcost = v[cur][i].second + cost;
-			if (dist[next] > newcost) {
-				dist[next] = newcost;
-				pq.push({ -dist[next],next });
+
+		if (dist > distance[curr]) continue;
+		for (int i = 0;i < adj[curr].size();i++) {
+			int nxt = adj[curr][i].first;
+			int cost = adj[curr][i].second;
+			if (distance[nxt] > cost + dist) {
+				distance[nxt] = cost + dist;
+				pq.push({ distance[nxt],nxt });
 			}
 		}
 	}
+
+	return distance;
 }
 
 int main() {
-	ios_base::sync_with_stdio(false);
-	cin.tie(NULL); cout.tie(NULL);
-	cin >> n >> e;
-	while (e--) {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+
+	cin >> N >> E;
+	vector<vector<pair<int, int>>>adj(N + 1);
+	for (int i = 0;i < E;i++) {
 		int a, b, c;
 		cin >> a >> b >> c;
-		v[a].push_back({ b,c });
-		v[b].push_back({ a,c });
+		adj[a].push_back({ b,c });
+		adj[b].push_back({ a,c });
 	}
-	cin >> x >> y;
-	int route_1, route_2 = 0;
-	bool flag = false;
-	dijkstra(1);
-	route_1 = dist[x];
-	route_2 = dist[y];
-	dijkstra(x);
-	route_1 += dist[y];
-	route_2 += dist[y] + dist[n];
-	dijkstra(y);
-	route_1 += dist[n];
-	int answer;
-	if (route_1 >= INF && route_2 >= INF) flag = true;
-	else {
-		answer = min(route_1, route_2);
-	}
-	if (flag) cout << -1;
-	else cout << answer;
+	cin >> v1 >> v2;
+
+	vector<int>dist_v1(N + 1);
+	vector<int>dist_v2(N + 1);
+	dist_v1 = dijkstra(v1, adj);
+	dist_v2 = dijkstra(v2, adj);
+
+	long long path1 = (long long)dist_v1[1] + dist_v1[v2] + dist_v2[N];
+	long long path2 = (long long)dist_v2[1] + dist_v2[v1] + dist_v1[N];
+
+	long long ans = min(path1, path2);
+
+	if (ans >= INF) cout << -1;
+	else cout << ans;
+	return 0;
 }
