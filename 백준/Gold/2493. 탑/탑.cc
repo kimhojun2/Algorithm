@@ -1,30 +1,34 @@
 #include <iostream>
+#include <algorithm>
+#include <vector>
 #include <stack>
 using namespace std;
+
+int N;
 
 int main() {
 	ios::sync_with_stdio(0);
 	cin.tie(0);
 
-	int N;
 	cin >> N;
+	stack<pair<int, int>>s;
 
-	stack<pair<int, int>> s;
 	for (int i = 1;i <= N;i++) {
-		int height;
-		cin >> height;
-		while (!s.empty()) {
-			if (height < s.top().second) {
-				cout << s.top().first << ' ';
-				break;
-			}
-			s.pop();
-		}
+		int a;
+		cin >> a;
 		if (s.empty()) {
-			cout << 0 << ' ';
+			cout << 0<<" ";
 		}
-		s.push(make_pair(i, height));
+		else {
+			while (!s.empty() && s.top().first < a) {
+				s.pop();
+			}
+			if (s.empty())cout << 0 << " ";
+			else cout << s.top().second << " ";
+		}
+		s.push({ a,i });
 	}
+
 
 	return 0;
 }
