@@ -1,39 +1,41 @@
 #include <iostream>
-#include <vector>
 #include <algorithm>
+
 using namespace std;
 
+int N, S;
+int arr[100000];
+int ps[100001];
+
 int main() {
-	ios::sync_with_stdio(0);
-	cin.tie(0); cout.tie(0);
-	int N, S;
-	cin >> N >> S;
-	vector<int>arr;
-	for (int i = 0;i < N;i++) {
-		int num;
-		cin >> num;
-		arr.push_back(num);
-	}
-	int answer = 0;
-	int left = 0;
-	int right = 0;
-	int sum = 0;
-	while (right < N) {
-		sum += arr[right];
+    ios::sync_with_stdio(0);
+    cin.tie(0);
 
-		while (sum >= S) {
-			if (answer == 0) {
-				answer = right - left+1;
-			}
-			else {
-				answer = min(answer, right - left+1);
-				sum -= arr[left];
-				left++;
-			}
-		}
-		right++;
-	}
-	cout << answer;
+    cin >> N >> S;
 
-	return 0;
+    ps[0] = 0;
+    for (int i = 0; i < N; i++) {
+        cin >> arr[i];
+        ps[i + 1] = ps[i] + arr[i];
+    }
+
+    int left_idx = 0;
+    int right_idx = 1;
+    int ans = N + 1;
+
+    while (left_idx <= right_idx && right_idx <= N) {
+        int s = ps[right_idx] - ps[left_idx];
+
+        if (s >= S) {
+            ans = min(ans, right_idx - left_idx);
+            left_idx++;
+        } else {
+            right_idx++;
+        }
+    }
+
+    if (ans == N + 1) cout << 0;
+    else cout << ans;
+
+    return 0;
 }
