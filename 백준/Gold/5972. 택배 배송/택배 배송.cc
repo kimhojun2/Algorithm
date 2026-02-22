@@ -1,54 +1,55 @@
 #include <iostream>
-#include <queue>
+#include <algorithm>
 #include <vector>
+#include <queue>
 using namespace std;
 
 int N, M;
-int dist[50001];
-vector<pair<int, int>> graph[50001];
 
-void dijkstra(int start) {
-	for (int i = 1;i <= N;i++) {
-		dist[i] = 1e9;
-	}
-	priority_queue<pair<int, int>>pq;
-	pq.push({ 0,start });
-	dist[start] = 0;
+int dijkstra(vector<vector<pair<int,int>>>& adj) {
+	priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>>pq;
+	const int INF = 1e9;
+	vector<int>distance(N + 1, INF);
+	distance[1] = 0;
+	pq.push({ 0,1 });
+
 	while (!pq.empty()) {
-		int cost = -pq.top().first;
-		int now = pq.top().second;
+		int curr = pq.top().second;
+		int dist = pq.top().first;
 		pq.pop();
 
-		if (dist[now] < cost) continue;
-
-		for (int i = 0;i < graph[now].size();i++) {
-			int next = graph[now][i].first;
-			int new_cost = graph[now][i].second + cost;
-			if (dist[next] > new_cost) {
-				dist[next] = new_cost;
-				pq.push({ -new_cost,next });
+		if (dist > distance[curr]) continue;
+		for (int i = 0;i < adj[curr].size();i++) {
+			int nxt = adj[curr][i].first;
+			int cost = adj[curr][i].second;
+			if (distance[nxt] > dist + cost) {
+				distance[nxt] = dist + cost;
+				pq.push({ distance[nxt],nxt });
 			}
 		}
 	}
+
+	return distance[N];
 }
 
 
 
 int main() {
 	ios::sync_with_stdio(0);
-	cin.tie(0); cout.tie(0);
-	
+	cin.tie(0);
+
 	cin >> N >> M;
 
+	vector<vector<pair<int, int>>>adj(N+1);
 	for (int i = 0;i < M;i++) {
-		int A, B, C;
-		cin >> A >> B >> C;
-		graph[A].push_back({ B,C });
-		graph[B].push_back({ A,C });
+		int a, b, c;
+		cin >> a >> b >> c;
+		adj[a].push_back({ b,c });
+		adj[b].push_back({ a,c });
 	}
 
-	dijkstra(1);
-	cout << dist[N];
+	cout << dijkstra(adj);
+
 
 	return 0;
 }
