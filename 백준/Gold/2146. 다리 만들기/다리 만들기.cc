@@ -1,78 +1,95 @@
 #include <iostream>
-#include <vector>
 #include <queue>
 #include <algorithm>
 using namespace std;
 
 int N;
-int dy[4] = { 0, 0, 1, -1 };
-int dx[4] = { 1, -1, 0, 0 };
+int arr[105][105];
+int island[105][105];
+int distv[105][105];
 
-void island_indexing(vector<vector<int>>& arr, vector<vector<int>>& visited, int sy, int sx, int idx) {
-	queue<pair<int, int>> q;
-	q.push({ sy, sx });
-	visited[sy][sx] = 1;
-	arr[sy][sx] = idx;
+int dy[4] = { -1, 1, 0, 0 };
+int dx[4] = { 0, 0, -1, 1 };
 
-	while (!q.empty()) {
-		int y = q.front().first;
-		int x = q.front().second;
-		q.pop();
+void island_bfs(queue<pair<int, int> >& edgeq) {
+	int id = 0;
 
-		for (int d = 0; d < 4; d++) {
-			int ny = y + dy[d];
-			int nx = x + dx[d];
-			if (ny < 0 || nx < 0 || ny >= N || nx >= N) continue;
-			if (!visited[ny][nx] && arr[ny][nx] == 1) {
-				visited[ny][nx] = 1;
-				arr[ny][nx] = idx;
-				q.push({ ny, nx });
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			if (arr[i][j] == 1 && island[i][j] == 0) {
+				id++;
+				queue<pair<int, int> > q;
+				q.push({ i, j });
+				island[i][j] = id;
+
+				while (!q.empty()) {
+					int y = q.front().first;
+					int x = q.front().second;
+					q.pop();
+
+					bool edge = false;
+
+					for (int k = 0; k < 4; k++) {
+						int ny = y + dy[k];
+						int nx = x + dx[k];
+
+						if (ny < 0 || nx < 0 || ny >= N || nx >= N) continue;
+
+						if (arr[ny][nx] == 0) edge = true;
+						else if (arr[ny][nx] == 1 && island[ny][nx] == 0) {
+							island[ny][nx] = id;
+							q.push({ ny, nx });
+						}
+					}
+
+					if (edge) edgeq.push({ y, x });
+				}
 			}
 		}
 	}
 }
 
-int find_min_bridge_from_island(vector<vector<int>>& arr, int island_id) {
-	vector<vector<int>> dist(N, vector<int>(N, -1));
-	queue<pair<int, int>> q;
-
+int bridge_bfs(queue<pair<int, int> >& edgeq) {
 	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++) {
-			if (arr[i][j] == island_id) {
-				for (int d = 0; d < 4; d++) {
-					int ni = i + dy[d];
-					int nj = j + dx[d];
-					if (ni < 0 || nj < 0 || ni >= N || nj >= N) continue;
-					if (arr[ni][nj] == 0) {
-						q.push({ i, j });
-						dist[i][j] = 0;
-						break;
-					}
-				}
-			}
-		}
+		for (int j = 0; j < N; j++) distv[i][j] = -1;
 	}
+
+	queue<pair<int, int> > q;
+
+	while (!edgeq.empty()) {
+		int y = edgeq.front().first;
+		int x = edgeq.front().second;
+		edgeq.pop();
+
+		distv[y][x] = 0;
+		q.push({ y, x });
+	}
+
+	int ans = 1e9;
 
 	while (!q.empty()) {
 		int y = q.front().first;
 		int x = q.front().second;
 		q.pop();
 
-		for (int d = 0; d < 4; d++) {
-			int ny = y + dy[d];
-			int nx = x + dx[d];
+		for (int k = 0; k < 4; k++) {
+			int ny = y + dy[k];
+			int nx = x + dx[k];
+
 			if (ny < 0 || nx < 0 || ny >= N || nx >= N) continue;
-			if (arr[ny][nx] != 0 && arr[ny][nx] != island_id) {
-				return dist[y][x];
-			}
-			if (arr[ny][nx] == 0 && dist[ny][nx] == -1) {
-				dist[ny][nx] = dist[y][x] + 1;
+
+			if (island[ny][nx] == 0) {
+				island[ny][nx] = island[y][x];
+				distv[ny][nx] = distv[y][x] + 1;
 				q.push({ ny, nx });
+			}
+			else if (island[ny][nx] != island[y][x]) {
+				ans = min(ans, distv[ny][nx] + distv[y][x]);
 			}
 		}
 	}
 
-	return 1e9;
+	return ans;
 }
 
 int main() {
@@ -80,23 +97,14 @@ int main() {
 	cin.tie(0);
 
 	cin >> N;
-	vector<vector<int>> arr(N, vector<int>(N));
-	vector<vector<int>> visited(N, vector<int>(N, 0));
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) cin >> arr[i][j];
+	}
 
-	for (int i = 0; i < N; i++)
-		for (int j = 0; j < N; j++)
-			cin >> arr[i][j];
+	queue<pair<int, int> > edgeq;
 
-	int idx = 2;
-	for (int i = 0; i < N; i++)
-		for (int j = 0; j < N; j++)
-			if (arr[i][j] == 1 && visited[i][j] == 0)
-				island_indexing(arr, visited, i, j, idx++);
+	island_bfs(edgeq);
+	cout << bridge_bfs(edgeq);
 
-	int answer = 1e9;
-	for (int k = 2; k < idx; k++)
-		answer = min(answer, find_min_bridge_from_island(arr, k));
-
-	cout << answer << '\n';
 	return 0;
 }
